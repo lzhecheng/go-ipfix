@@ -25,13 +25,17 @@ import (
 	"github.com/vmware/go-ipfix/pkg/entities"
 )
 
-func (cp *collectingProcess) startUDPServer() {
-	s, err := net.ResolveUDPAddr("udp", cp.address.String())
+func (cp *collectingProcess) startUDPServer(isIPv6 bool) {
+	networkType := "udp"
+	if isIPv6 {
+		networkType = "udp6"
+	}
+	s, err := net.ResolveUDPAddr(networkType, cp.address.String())
 	if err != nil {
 		klog.Error(err)
 		return
 	}
-	conn, err := net.ListenUDP("udp", s)
+	conn, err := net.ListenUDP(networkType, s)
 	if err != nil {
 		klog.Error(err)
 		return

@@ -19,6 +19,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"net"
+	"regexp"
 	"sync"
 	"time"
 
@@ -70,10 +71,12 @@ func InitCollectingProcess(address net.Addr, maxBufferSize uint16, templateTTL u
 }
 
 func (cp *collectingProcess) Start() {
+	// if it is an IPv6 network
+	match, _ := regexp.MatchString("\\[.*\\]:.*", cp.address.String())
 	if cp.address.Network() == "tcp" {
-		cp.startTCPServer()
+		cp.startTCPServer(match)
 	} else if cp.address.Network() == "udp" {
-		cp.startUDPServer()
+		cp.startUDPServer(match)
 	}
 }
 

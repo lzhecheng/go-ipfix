@@ -9,8 +9,12 @@ import (
 	"k8s.io/klog"
 )
 
-func (cp *collectingProcess) startTCPServer() {
-	listener, err := net.Listen("tcp", cp.address.String())
+func (cp *collectingProcess) startTCPServer(isIPv6 bool) {
+	networkType := "tcp"
+	if isIPv6 {
+		networkType = "tcp6"
+	}
+	listener, err := net.Listen(networkType, cp.address.String())
 	if err != nil {
 		klog.Errorf("Cannot start collecting process on %s: %v", cp.address.String(), err)
 		return

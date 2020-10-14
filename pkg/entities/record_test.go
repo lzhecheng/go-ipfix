@@ -15,6 +15,7 @@
 package entities
 
 import (
+	"fmt"
 	"net"
 	"testing"
 
@@ -57,21 +58,23 @@ func TestAddInfoElements(t *testing.T) {
 		NewInfoElement("samplingProbability", 311, 10, 0, 8),     // float64
 		NewInfoElement("dataRecordsReliability", 276, 11, 0, 1),  // boolean
 		NewInfoElement("sourceMacAddress", 56, 12, 0, 6),         // mac address
-		NewInfoElement("sourceIPv4Address", 8, 18, 0, 4),         // IP Address
+		NewInfoElement("sourceIPv4Address", 8, 18, 0, 4),         // IPv4 Address
+		NewInfoElement("sourceIPv6Address", 27, 19, 0, 16),       // IPv6 Address
 		NewInfoElement("interfaceDescription", 83, 13, 0, 65535), // String
 	}
 	macAddress, _ := net.ParseMAC("aa:bb:cc:dd:ee:ff")
 	valData := []interface{}{
-		uint8(0x1),                  // ICMP proto
-		uint16(443),                 // https port
-		uint32(1000),                // ingress interface ID
-		uint64(100000),              // packet count
-		int32(-12345),               // mibObjectValueInteger
-		0.856,                       // samplingProbability
-		true,                        // dataRecordsReliability
-		macAddress,                  // mac address
-		net.ParseIP("1.2.3.4"),      // IP Address
-		"My Interface in IPFIX lib", // String
+		uint8(0x1),                    // ICMP proto
+		uint16(443),                   // https port
+		uint32(1000),                  // ingress interface ID
+		uint64(100000),                // packet count
+		int32(-12345),                 // mibObjectValueInteger
+		0.856,                         // samplingProbability
+		true,                          // dataRecordsReliability
+		macAddress,                    // mac address
+		net.ParseIP("1.2.3.4"),     // IPv4 Address
+		net.ParseIP("fe80:1:2::3"), // IPv6 Address
+		"My Interface in IPFIX lib",   // String
 	}
 	addIETests := []struct {
 		record  Record
@@ -112,8 +115,8 @@ func TestAddInfoElements(t *testing.T) {
 					expectLen = testIE.Len
 				}
 			}
-			assert.Equal(t, expectLen, actualLen, "Length of bytes written to buffer is not same as expected.")
-			assert.Equal(t, nil, actualErr, "Error returned is not nil")
+			assert.Equal(t, expectLen, actualLen, fmt.Sprintf("%s: Length of bytes written to buffer is not same as expected.", testIE.Name))
+			assert.Equal(t, nil, actualErr, fmt.Sprintf("%s: Error returned is not nil", testIE.Name))
 		}
 		// go test -v to see data buffer in hex format
 		if i == 0 {

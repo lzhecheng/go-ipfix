@@ -55,7 +55,7 @@ type ExportingProcess struct {
 func InitExportingProcess(collectorAddr net.Addr, obsID uint32, tempRefTimeout uint32) (*ExportingProcess, error) {
 	conn, err := net.Dial(collectorAddr.Network(), collectorAddr.String())
 	if err != nil {
-		klog.Errorf("Cannot the create the connection to configured ExportingProcess %s: %v", collectorAddr.String(), err)
+		klog.Errorf("Cannot create the connection to configured ExportingProcess %s: %v", collectorAddr.String(), err)
 		return nil, err
 	}
 	msgBuffer := entities.NewMsgBuffer()
